@@ -40,6 +40,28 @@ namespace BusinessLayer
         {
             return _repository.GetAll();
         }
+
+        public bool Update(Product product)
+        {
+            if (string.IsNullOrWhiteSpace(product.Name))
+                throw new ArgumentNullException("Ime proizvoda je obavezno");
+            if (product.Price <= 0)
+                throw new ArgumentException("Cena veca od nule");
+            if (product.Count < 0)
+                throw new ArgumentException("Broj proizvoda mora biti veci od nule");
+            if (product.IdCategory == 0)
+                throw new ArgumentException("Morate odabrati kategoriju proizvoda");
+
+
+            return _repository.Update(product);
+        }
+
+        public bool Delete(Product product)
+        {
             
+                return _repository.Delete(product);
+            
+        }
+
     }
 }

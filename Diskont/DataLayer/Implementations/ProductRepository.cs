@@ -101,7 +101,23 @@ namespace DataLayer.Implementations
 
         public bool Update(Product entity)
         {
-            throw new NotImplementedException();
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionBase.ConnectionString))
+            {
+                sqlConnection.Open();
+                SqlCommand sqlCommand = sqlConnection.CreateCommand();
+
+                sqlCommand.CommandText = "UPDATE Products SET Name=@Name, Price=@Price, " +
+                    "Count=@Count,IdCategory=@IdCategory WHERE IdProduct=@IdProduct";
+
+
+                sqlCommand.Parameters.AddWithValue("@Name", entity.Name);
+                sqlCommand.Parameters.AddWithValue("@Price", entity.Price);
+                sqlCommand.Parameters.AddWithValue("@Count", entity.Count);
+                sqlCommand.Parameters.AddWithValue("@IdCategory", entity.IdCategory);
+                sqlCommand.Parameters.AddWithValue("@IdProduct", entity.IdProduct);
+                int res = sqlCommand.ExecuteNonQuery();
+                return res > 0;
+            }
         }
     }
 }
