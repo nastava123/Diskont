@@ -27,6 +27,7 @@ namespace DataLayer.Implementations
             List<User> lista = new List<User>();
             using (SqlConnection sqlConnection = new SqlConnection(ConnectionBase.ConnectionString))
             {
+                sqlConnection.Open();
                 SqlCommand sqlCommand = sqlConnection.CreateCommand();
                 sqlCommand.CommandText = "SELECT * FROM Users";
                 SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
@@ -49,7 +50,29 @@ namespace DataLayer.Implementations
 
         public User? GetByEmail(string email)
         {
-            throw new NotImplementedException();
+            User user = new User();
+            using (SqlConnection sqlConnection = new SqlConnection(ConnectionBase.ConnectionString))
+            {
+                sqlConnection.Open();
+                SqlCommand sqlCommand = sqlConnection.CreateCommand();
+                sqlCommand.CommandText = "SELECT * FROM Users WHERE Email=@email";
+                sqlCommand.Parameters.AddWithValue("@email", email);
+                SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
+                while (sqlDataReader.Read())
+                {
+                   
+                    user.IdUser = sqlDataReader.GetInt32(0);
+                    user.FirstName = sqlDataReader.GetString(1);
+                    user.LastName = sqlDataReader.GetString(2);
+                    user.Email = sqlDataReader.GetString(3);
+                    user.PasswordHash = sqlDataReader.GetString(4);
+                    user.Status = sqlDataReader.GetBoolean(5);
+                    user.CreatedDate = sqlDataReader.GetDateTime(6);
+                    user.IdRole = sqlDataReader.GetInt32(7);
+                    
+                }
+            }
+            return user;
         }
 
         public bool Update(User entity)
