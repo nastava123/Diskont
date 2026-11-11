@@ -13,7 +13,7 @@ namespace DataLayer.Implementations
             {
                 sqlConnection.Open();
                 SqlCommand sqlCommand = sqlConnection.CreateCommand();
-                // CreatedDate se ne šalje: baza ga sama popunjava (DEFAULT GETDATE())
+               
                 sqlCommand.CommandText = "INSERT INTO Users(FirstName, LastName, Email, PasswordHash, Status, IdRole) " +
                     "values(@FirstName, @LastName, @Email, @PasswordHash, @Status, @IdRole)";
                 sqlCommand.Parameters.AddWithValue("@FirstName", entity.FirstName);

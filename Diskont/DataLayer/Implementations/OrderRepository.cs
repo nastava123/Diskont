@@ -13,7 +13,7 @@ namespace DataLayer.Implementations
             {
                 sqlConnection.Open();
                 SqlCommand sqlCommand = sqlConnection.CreateCommand();
-                // OrderDate se ne šalje: baza ga sama popunjava (DEFAULT GETDATE())
+                
                 sqlCommand.CommandText = "INSERT INTO Orders(IdUser, TotalPrice, IsCompleted) " +
                     "values(@IdUser, @TotalPrice, @IsCompleted)";
                 sqlCommand.Parameters.AddWithValue("@IdUser", entity.IdUser);

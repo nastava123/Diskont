@@ -36,42 +36,42 @@ namespace BusinessLayer
             return _orderItemRepository.GetByOrder(idOrder);
         }
 
-        // ================== KORPA: radi se na Vežbama 5 ==================
+        // ================== KORPA: Vežbe 5 ==================
 
         // Korak 1: vraća korpu korisnika (otvorenu porudžbinu) ili null
         public Order? GetCart(int idUser)
         {
-            throw new NotImplementedException("Vežbe 5, korak 1");
+            throw new NotImplementedException("");
         }
 
         // Korak 2: stavke korpe
         public List<OrderItem> GetCartItems(int idUser)
         {
-            throw new NotImplementedException("Vežbe 5, korak 2");
+            throw new NotImplementedException("");
         }
 
         // Korak 3: dodavanje proizvoda u korpu
         public Order AddToCart(int idUser, int idProduct, int quantity)
         {
-            throw new NotImplementedException("Vežbe 5, korak 3");
+            throw new NotImplementedException("");
         }
 
         // Korak 4: uklanjanje proizvoda iz korpe
         public bool RemoveFromCart(int idUser, int idProduct)
         {
-            throw new NotImplementedException("Vežbe 5, korak 4");
+            throw new NotImplementedException("");
         }
 
         // Korak 5: završetak kupovine
         public Order Checkout(int idUser)
         {
-            throw new NotImplementedException("Vežbe 5, korak 5");
+            throw new NotImplementedException("");
         }
 
         // Korak 6: istorija završenih porudžbina
         public List<Order> GetHistory(int idUser)
         {
-            throw new NotImplementedException("Vežbe 5, korak 6");
+            throw new NotImplementedException("");
         }
     }
 }
