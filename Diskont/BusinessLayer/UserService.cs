@@ -5,7 +5,7 @@ namespace BusinessLayer
 {
     public class UserService
     {
-        private const int CustomerRole = 2;     // uloga „Kupac" iz 02_podaci.sql
+        private const int CustomerRole = 2;    
 
         private readonly IUserRepository _repository;
 
@@ -14,8 +14,7 @@ namespace BusinessLayer
             _repository = repository;
         }
 
-        // Registracija novog kupca.
-        // Napomena: heširanje lozinke radi se u vežbama o autentifikaciji.
+       
         public bool Add(User user)
         {
             Validate(user);

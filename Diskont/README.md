@@ -1,4 +1,4 @@
-# Diskont — Softversko inženjerstvo, Vežbe 5 (početno stanje)
+# Diskont — Softversko inženjerstvo, Vežbe 5 (rešenje)
 
 ## Šta je urađeno
 
@@ -18,9 +18,9 @@ Metode `Get…` vraćaju **`null`** kada red ne postoji.
 **BusinessLayer** — osnovni servisi sa validacijom:
 `ProductService`, `CategoryService`, `UserService`, a `OrderService` ima konstruktor i osnovne metode.
 
-## Šta se radi na Vežbama 5
+## Rešenje Vežbi 5
 
-U `OrderService` metode za korpu bacaju `NotImplementedException`:
+U `OrderService` su implementirane metode za korpu:
 `GetCart`, `GetCartItems`, `AddToCart`, `RemoveFromCart`, `Checkout`, `GetHistory`.
 
 ## Pokretanje
