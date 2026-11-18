@@ -1,30 +1,22 @@
-# Diskont — Softversko inženjerstvo, Vežbe 5 (rešenje)
+# Diskont — Softversko inženjerstvo, Vežbe 6 (rešenje)
 
-## Šta je urađeno
+Novi projekat **WebApi** (ASP.NET Core, .NET 8) izlaže servise iz BusinessLayer-a preko HTTP-a.
 
-**DataLayer** — svi repozitorijumi su kompletni (Add, Update, Delete, Get, GetAll + dodatne metode):
+## Struktura WebApi projekta
 
-| Repozitorijum | Dodatne metode |
+| Fajl | Sadržaj |
 |---|---|
-| `ProductRepository` | `GetByCategory` |
-| `CategoryRepository` | `GetByName` |
-| `UserRepository` | `GetByEmail` |
-| `RoleRepository` | — |
-| `OrderRepository` | `GetAllByUser`, `GetOrderByUser` (korpa = porudžbina sa `IsCompleted = 0`) |
-| `OrderItemRepository` | `GetByOrder`, `GetByOrderAndProduct` |
-
-Metode `Get…` vraćaju **`null`** kada red ne postoji.
-
-**BusinessLayer** — osnovni servisi sa validacijom:
-`ProductService`, `CategoryService`, `UserService`, a `OrderService` ima konstruktor i osnovne metode.
-
-## Rešenje Vežbi 5
-
-U `OrderService` su implementirane metode za korpu:
-`GetCart`, `GetCartItems`, `AddToCart`, `RemoveFromCart`, `Checkout`, `GetHistory`.
+| `Program.cs` | DI registracija repozitorijuma i servisa, Swagger, obrada grešaka, CORS |
+| `Controllers/CategoriesController.cs` | CRUD nad kategorijama |
+| `Controllers/ProductsController.cs` | CRUD, `?idCategory=`, `/available` |
+| `Controllers/UsersController.cs` | lista i registracija (bez lozinki), istorija porudžbina |
+| `Controllers/CartController.cs` | korpa: `/api/users/{idUser}/cart` |
+| `Errors/BusinessExceptionHandler.cs` | `ArgumentException` → 400, `InvalidOperationException` → 409, ostalo → 500 |
+| `Dto/` | `UserDto`, `RegisterUserRequest`, `AddToCartRequest`, `CartDto` |
+| `WebApi.http` | svi zahtevi za testiranje |
 
 ## Pokretanje
 
-1. Nad bazom `DiskontDB` izvršiti `Database/03_korpa.sql` (nova kolona `Orders.IsCompleted`).
-   Za novu bazu redom: `01_tabele.sql`, `02_podaci.sql`, `03_korpa.sql`.
-2. Otvoriti `Diskont.sln`, startni projekat **TestConsole**, Ctrl+F5.
+1. Baza `DiskontDB` sa skriptama `Database/01_tabele.sql`, `02_podaci.sql`, `03_korpa.sql`.
+2. Startni projekat **WebApi**, F5 → otvara se `https://localhost:7001/swagger`.
+3. Ili: otvoriti `WebApi/WebApi.http` i kliknuti **Send request** iznad zahteva.

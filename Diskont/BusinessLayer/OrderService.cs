@@ -158,7 +158,7 @@ namespace BusinessLayer
                                    .ToList();
         }
 
-       
+        // Ukupan iznos se uvek računa iz stavki, nikad „na ruke"
         private void UpdateTotal(Order cart)
         {
             List<OrderItem> items = _orderItemRepository.GetByOrder(cart.IdOrder);
