@@ -1,0 +1,104 @@
+@host = https://localhost:7001
+
+############ KATEGORIJE ############
+
+### Sve kategorije
+GET {{host}}/api/categories
+
+### Jedna kategorija
+GET {{host}}/api/categories/2
+
+### Kategorija koja ne postoji (404)
+GET {{host}}/api/categories/999
+
+### Nova kategorija (201)
+POST {{host}}/api/categories
+Content-Type: application/json
+
+{ "name": "Slatkiši" }
+
+### Ista kategorija još jednom (409)
+POST {{host}}/api/categories
+Content-Type: application/json
+
+{ "name": "Slatkiši" }
+
+############ PROIZVODI ############
+
+### Svi proizvodi
+GET {{host}}/api/products
+
+### Proizvodi jedne kategorije
+GET {{host}}/api/products?idCategory=3
+
+### Proizvodi na stanju
+GET {{host}}/api/products/available
+
+### Nov proizvod (201)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{ "name": "Čokolada", "price": 149.00, "count": 20, "idCategory": 1 }
+
+### Neispravna cena (400)
+POST {{host}}/api/products
+Content-Type: application/json
+
+{ "name": "Žvake", "price": 0, "count": 10, "idCategory": 1 }
+
+### Izmena proizvoda (204)
+PUT {{host}}/api/products/3
+Content-Type: application/json
+
+{ "idProduct": 3, "name": "Hleb beli", "price": 85.00, "count": 25, "idCategory": 2 }
+
+############ KORISNICI ############
+
+### Svi korisnici (bez lozinki)
+GET {{host}}/api/users
+
+### Registracija (201)
+POST {{host}}/api/users
+Content-Type: application/json
+
+{ "firstName": "Marko", "lastName": "Marković",
+  "email": "marko.m@example.com", "password": "Lozinka123" }
+
+### Isti e-mail još jednom (409)
+POST {{host}}/api/users
+Content-Type: application/json
+
+{ "firstName": "Marko", "lastName": "Marković",
+  "email": "marko.m@example.com", "password": "Lozinka123" }
+
+############ KORPA ############
+
+### Korpa korisnika 1
+GET {{host}}/api/users/1/cart
+
+### Dodavanje u korpu
+POST {{host}}/api/users/1/cart/items
+Content-Type: application/json
+
+{ "idProduct": 3, "quantity": 2 }
+
+### Dodavanje: previše komada (409)
+POST {{host}}/api/users/1/cart/items
+Content-Type: application/json
+
+{ "idProduct": 4, "quantity": 500 }
+
+### Dodavanje: količina 0 (400)
+POST {{host}}/api/users/1/cart/items
+Content-Type: application/json
+
+{ "idProduct": 4, "quantity": 0 }
+
+### Uklanjanje iz korpe
+DELETE {{host}}/api/users/1/cart/items/3
+
+### Završetak kupovine
+POST {{host}}/api/users/1/cart/checkout
+
+### Istorija porudžbina
+GET {{host}}/api/users/1/orders

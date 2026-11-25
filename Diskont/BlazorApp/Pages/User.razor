@@ -1,0 +1,21 @@
+﻿@page "/users";
+
+<h3>User</h3>
+
+@code {
+
+    private List<User>lista = new List<User>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            lista = await UserApi.GetAllUsers();
+        }
+        catch
+        {
+            
+        }
+    }
+
+}
