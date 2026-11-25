@@ -1,0 +1,16 @@
+@page "/counter"
+
+<h1>Brojač</h1>
+
+<p>Broj klikova: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Klikni</button>
+
+@code {
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        currentCount++;
+    }
+}

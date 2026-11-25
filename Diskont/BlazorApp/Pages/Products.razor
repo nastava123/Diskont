@@ -1,9 +1,5 @@
 @page "/products"
-@inject ProductApi ProductApi
-@inject CategoryApi CategoryApi
-@inject IJSRuntime JS
-
-<PageTitle>Proizvodi</PageTitle>
+@inject HttpClient Http
 
 <h1>Proizvodi</h1>
 
@@ -13,120 +9,116 @@
 }
 
 <div class="row g-2 mb-3">
-    <div class="col-sm-6 col-lg-4">
-        <select class="form-select"
-                @bind="selectedCategory" @bind:after="LoadProductsAsync">
-            <option value="0">Sve kategorije</option>
-            @foreach (Category category in categories)
+    <div class="col-md-3">
+        <input class="form-control" placeholder="Naziv" @bind="newProduct.Name" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" placeholder="Cena"
+               @bind="newProduct.Price" />
+    </div>
+    <div class="col-md-2">
+        <input class="form-control" type="number" placeholder="Stanje"
+               @bind="newProduct.Count" />
+    </div>
+    <div class="col-md-3">
+        <select class="form-select" @bind="newProduct.IdCategory">
+            <option value="0">-- kategorija --</option>
+            @foreach (Category c in categories)
             {
-                <option value="@category.IdCategory">@category.Name</option>
+                <option value="@c.IdCategory">@c.Name</option>
             }
         </select>
     </div>
-    <div class="col-auto">
-        <a href="products/new" class="btn btn-primary">+ Novi proizvod</a>
+    <div class="col-md-2">
+        <button class="btn btn-primary" @onclick="AddAsync">Dodaj</button>
     </div>
 </div>
 
 @if (products == null)
 {
-    <p><em>Učitavanje...</em></p>
-}
-else if (products.Count == 0)
-{
-    <p>Nema proizvoda u izabranoj kategoriji.</p>
+    <p>Učitavanje...</p>
 }
 else
 {
-    <table class="table table-hover align-middle">
-        <thead>
+    <table class="table">
+        <tr>
+            <th>Naziv</th>
+            <th>Kategorija</th>
+            <th>Cena</th>
+            <th>Stanje</th>
+            <th></th>
+        </tr>
+        @foreach (Product p in products)
+        {
             <tr>
-                <th>Naziv</th>
-                <th>Kategorija</th>
-                <th class="text-end">Cena</th>
-                <th class="text-end">Na stanju</th>
-                <th></th>
+                <td>@p.Name</td>
+                <td>@CategoryName(p.IdCategory)</td>
+                <td>@p.Price din</td>
+                <td>@p.Count</td>
+                <td>
+                    <button class="btn btn-sm btn-outline-danger"
+                            @onclick="() => DeleteAsync(p.IdProduct)">Obriši</button>
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @foreach (Product product in products)
-            {
-                <tr>
-                    <td>@product.Name</td>
-                    <td>@CategoryName(product.IdCategory)</td>
-                    <td class="text-end">@product.Price.ToString("N2") din</td>
-                    <td class="text-end">
-                        @if (product.Count == 0)
-                        {
-                            <span class="badge bg-secondary">nema</span>
-                        }
-                        else
-                        {
-                            @product.Count
-                        }
-                    </td>
-                    <td class="text-end">
-                        <a href="products/edit/@product.IdProduct"
-                           class="btn btn-sm btn-outline-primary">Izmeni</a>
-                        <button class="btn btn-sm btn-outline-danger ms-1"
-                                @onclick="() => DeleteAsync(product)">Obriši</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
+        }
     </table>
 }
 
 @code {
     private List<Product>? products;
     private List<Category> categories = new List<Category>();
-    private int selectedCategory;               // 0 = sve kategorije
+    private Product newProduct = new Product();   // polja forme pišu u ovaj objekat
     private string? errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        try
-        {
-            categories = await CategoryApi.GetAllAsync();
-            await LoadProductsAsync();
-        }
-        catch (HttpRequestException)
-        {
-            errorMessage = "Web API nije dostupan. Da li je pokrenut WebApi?";
-        }
+        categories = await Http.GetFromJsonAsync<List<Category>>("api/categories")
+                     ?? new List<Category>();
+        await LoadAsync();
     }
 
-    private async Task LoadProductsAsync()
+    private async Task LoadAsync()
     {
-        products = null;                        // prikazuje „Učitavanje...”
-        int? filter = selectedCategory == 0 ? null : selectedCategory;
-        products = await ProductApi.GetAllAsync(filter);
+        products = await Http.GetFromJsonAsync<List<Product>>("api/products");
     }
 
-    // proizvod ima samo IdCategory; naziv se traži u već učitanoj listi kategorija
+    // proizvod ima samo IdCategory, pa se naziv traži u listi kategorija
     private string CategoryName(int idCategory)
     {
-        Category? category =
-            categories.FirstOrDefault(c => c.IdCategory == idCategory);
-        return category?.Name ?? "?";
+        Category? c = categories.FirstOrDefault(x => x.IdCategory == idCategory);
+        return c?.Name ?? "";
     }
 
-    private async Task DeleteAsync(Product product)
+    private async Task AddAsync()
     {
-        errorMessage = null;
-        string question = $"Obrisati proizvod „{product.Name}”?";
-        bool confirmed = await JS.InvokeAsync<bool>("confirm", question);
-        if (!confirmed)
-            return;
-
-        try
+        HttpResponseMessage response =
+            await Http.PostAsJsonAsync("api/products", newProduct);
+        if (response.IsSuccessStatusCode)
         {
-            await ProductApi.DeleteAsync(product.IdProduct);
-            await LoadProductsAsync();
+            newProduct = new Product();             // prazna forma
         }
-        catch (ApiException ex)
+        await HandleResponseAsync(response);
+    }
+
+    private async Task DeleteAsync(int id)
+    {
+        HttpResponseMessage response =
+            await Http.DeleteAsync($"api/products/{id}");
+        await HandleResponseAsync(response);
+    }
+
+    private async Task HandleResponseAsync(HttpResponseMessage response)
+    {
+        if (response.IsSuccessStatusCode)
         {
-            errorMessage = ex.Message;
+            errorMessage = null;
+            await LoadAsync();
+        }
+        else
+        {
+            ErrorResponse? error =
+                await response.Content.ReadFromJsonAsync<ErrorResponse>();
+            errorMessage = error?.Message;
         }
     }
 }
